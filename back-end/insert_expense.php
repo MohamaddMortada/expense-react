@@ -1,31 +1,21 @@
 <?php
-include 'connection.php';
-session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(["status" => "error", "message" => "User not logged in"]);
-    exit;
-}
+include 'connections.php';
 
-$user_id = $_SESSION['user_id'];
-$type = $_POST['type'];
-$source = $_POST['source'];
-$amount = $_POST['amount'];
-$date = $_POST['date'];
+$data = json_decode(file_get_contents("php://input"), true);
 
-$query = $connection->prepare("INSERT INTO expenses (type, source, amount, date, user_id) VALUES (?, ?, ?, ?, ?)");
-$query->bind_param("ssdsi", $type, $source, $amount, $date, $user_id);
+$type = $data['type'];
+$source = $data['source'];
+$amount = $data['amount'];
+$date = $data['date'];
+
+$query = $connection->prepare("INSERT INTO expenses (type, source, amount, date) VALUES (?, ?, ?, ?)");
+$query->bind_param("ssds", $type, $source, $amount, $date);
 
 if ($query->execute()) {
-    echo json_encode(["
-    status" => "success", 
-    "message" => "Transaction added successfully"
-]);
+    echo json_encode(["status" => "success", "message" => "Transaction added successfully"]);
 } else {
-    echo json_encode([
-        "status" => "error", 
-        "message" => "Transaction insertion failed"
-    ]);
+    echo json_encode(["status" => "error", "message" => "Transaction insertion failed"]);
 }
 
 $query->close();

@@ -2,7 +2,7 @@
 $host = "localhost";
 $dbuser = "root";
 $dbpass = "";
-$dbname = "transactiondb";
+$dbname = "expensetrackerdb";
 
 $connection = new mysqli($host, $dbuser, $dbpass, $dbname);
 
